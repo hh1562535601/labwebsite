@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<style type="text/css">
+		table.one{
+ 		    border-collapse:collapse;
+ 		    table-layout:fixed;<!--单元格大小固定-->
+		}
+		th.one{
+			border:1px solid black;
+			width:200px;
+			height:20px;
+			text-align: center;
+			<!--color: rgb(189, 149, 21);-->
+			<!--background-color: black;-->
+		}
+		td.one{
+			border:1px solid black;
+			width:200px;
+			height:20px;
+			text-align: center;
+		}
+		a.c_1{
+				color: rgb(61, 10, 223);		
+		}
+		a.c_1:hover{
+		font-size:150%;
+		}
+		a{text-decoration:none}<!--禁止连接的下划线-->
+	</style>
+</head>
+<body style="background-color:#94CECB">
+<h1 align=center>实验室数据统计</h1>
+<br/>
+<!--其实这一句可以不要-
+<table align="center" class="one" width="2400">
+<br/><br/>
+<tr align="center">
+<th class="one">序号</th><th class="one">英文题目</th><th class="one">中文题目</th>
+<th class="one">原文语言类型（中文/英文）</th><th class="one">作者英文名</th><th class="one">作者中文名</th>
+<th class="one">发表类型（期刊/会议）</th><th class="one">刊物名称（中文）</th><th class="one">刊物名称（英文）</th>
+<th class="one">会议名称</th><th class="one">发表时间</th><th class="one">会议地点</th><th class="one">页码</th>
+<th class="one">SCI检索号</th><th class="one">EI检索号</th><th class="one">ISTP检索号</th><th class="one">影响因子</th>
+<th class="one">他引次数</th><th class="one">署名信息</th><th class="one">责任教师</th>
+</tr>-->
+<!--读取表格内容-->
+<?php
+error_reporting(E_ALL);
+//set_time_limit(0);
+//date_default_timezone_set('Europe/London');
+/** Include path **/
+set_include_path(get_include_path() . PATH_SEPARATOR . './Classes/');
+
+/** PHPExcel_IOFactory */
+include 'PHPExcel/IOFactory.php';
+
+
+$inputFileType = 'Excel5';
+//	$inputFileType = 'Excel2007';
+//	$inputFileType = 'Excel2003XML';
+//	$inputFileType = 'OOCalc';
+//	$inputFileType = 'Gnumeric';
+$inputFileName = './source.xls';//name of file you‘ll read
+
+//echo 'Loading file ',pathinfo($inputFileName,PATHINFO_BASENAME),' using IOFactory with a defined reader type of ',$inputFileType,'<br />';
+$objReader = PHPExcel_IOFactory::createReader($inputFileType);
+//echo 'Turning Formatting off for Load<br />';
+$objReader->setReadDataOnly(true);
+$objPHPExcel = $objReader->load($inputFileName);
+
+
+//echo '<hr />';
+
+$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+//echo "数组大小：".count($sheetData)."<br/>";
+//var_dump($sheetData);
+//画表的内容
+echo "<table align=\"center\" class=\"one\" width=\"4000\">";
+	foreach ($sheetData as $row_index => $col_array) 
+	{
+		if ($row_index>1) {//省略第一行
+			echo "<tr align=\"center\">";
+			if ($row_index==2) //第二行是表头
+			foreach($col_array as $key=>$value)
+			{
+				if($key != 'A')//省略第一列
+				echo "<th class=\"one\">".$value."</th>";
+			}
+			else
+			foreach($col_array as $key=>$value)
+			{
+				if($key != 'A')//省略第一列
+				echo "<td class=\"one\">".$value."</td>";
+			}
+			echo "</tr>";
+		}
+	}
+		
+	echo "</table>";
+?>
+
+</br>
+<p align="right"><a class="c_1" href="/resources/重点关注的期刊及会议论文信息汇总.xlsx" download="重点关注的期刊及会议论文信息汇总"><b>下载表格</b></a></p>
+<br>
+</body>
+</html>
